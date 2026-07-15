@@ -1,0 +1,15 @@
+{
+  "name": "JobSarv",
+  "description": "Premium AI-powered job portal for global career growth and intelligent hiring.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "AI Resume Builder",
+    "Global Job Search",
+    "Career Coach AI",
+    "Portfolio Builder"
+  ]
+}
