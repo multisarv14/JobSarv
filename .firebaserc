@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "multisarv-webapps"
+  },
+  "targets": {
+    "multisarv-webapps": {
+      "hosting": {
+        "jobsarv": [
+          "jobsarv"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
