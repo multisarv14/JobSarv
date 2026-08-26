@@ -84,7 +84,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, matchInfo, variant = 'default', 
     return (
         <div
             onClick={() => onViewDetails?.(job)}
-            className="relative bg-white p-6 rounded-xl border border-gray-200 hover:shadow-xl hover:border-indigo-500/50 transition-all duration-300 transform hover:scale-[1.02] group cursor-pointer"
+            className="relative bg-white p-6 rounded-xl border border-gray-200 hover:shadow-[0_14px_35px_rgba(30,41,59,0.12)] hover:border-orange-300 transition-all duration-300 group cursor-pointer"
         >
             {job.recommended && !matchInfo && (
                  <div className="absolute top-0 right-0 -mt-3 -mr-3">
@@ -134,7 +134,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, matchInfo, variant = 'default', 
                     {onTailorResume && user && (
                         <button
                             onClick={(e) => { e.stopPropagation(); onTailorResume(job); }}
-                            className="px-3 py-2 text-sm font-medium text-indigo-700 bg-indigo-100 rounded-lg hover:bg-indigo-200 transition-colors whitespace-nowrap"
+                            className="px-3 py-2 text-sm font-medium text-orange-700 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors whitespace-nowrap"
                             title="Tailor resume for this job"
                         >
                             Tailor Resume
@@ -149,7 +149,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, matchInfo, variant = 'default', 
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                         </svg>
                     </button>
-                    <button onClick={handleApply} className="px-5 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm hover:shadow-md transform hover:-translate-y-0.5 whitespace-nowrap">
+                    <button onClick={handleApply} className="px-5 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors shadow-sm hover:shadow-md transform hover:-translate-y-0.5 whitespace-nowrap">
                         Apply Now
                     </button>
                 </div>

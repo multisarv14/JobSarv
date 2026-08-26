@@ -1,16 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #4f46e5;
-  --color-primary-hover: #4338ca;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-primary: #e4573d;
+  --color-primary-hover: #c9452e;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "DM Sans", ui-sans-serif, sans-serif;
 }
 
 @layer base {
+  html { overflow-x: hidden; }
   body {
-    @apply font-sans text-gray-900 bg-gray-50;
+    @apply font-sans text-gray-900 bg-slate-50;
+    background-image: radial-gradient(circle at 15% 0%, rgba(240, 90, 60, 0.07), transparent 28rem), radial-gradient(circle at 85% 12%, rgba(15, 118, 110, 0.06), transparent 24rem);
   }
+
+  h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); }
+  input, select, textarea { @apply transition-colors duration-200; }
+  input:focus, select:focus, textarea:focus { @apply outline-none ring-2 ring-orange-500/20 border-orange-500; }
 }
+
+/* Preserve page scrolling without showing the browser's side gutter. */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar { width: 0; height: 0; }
+
+/* Keep legacy pages on the same Jobsarv brand while they are being refreshed. */
+.bg-indigo-600 { background-color: #f05a3c !important; }
+.bg-indigo-900 { background-color: #14212b !important; }
+.hover\:bg-indigo-700:hover { background-color: #d94b30 !important; }
+.bg-indigo-500 { background-color: #e86b52 !important; }
+.bg-indigo-100 { background-color: #fff0eb !important; }
+.bg-indigo-50 { background-color: #fff7f4 !important; }
+.text-indigo-600, .text-indigo-500 { color: #d94b30 !important; }
+.text-indigo-700, .text-indigo-800 { color: #b93e29 !important; }
+.text-indigo-400 { color: #ffad98 !important; }
+.border-indigo-500, .border-indigo-600 { border-color: #f05a3c !important; }
+.ring-indigo-500 { --tw-ring-color: #f05a3c !important; }
+.focus\:ring-indigo-500:focus { --tw-ring-color: rgb(240 90 60 / 0.3) !important; }
+.focus\:border-indigo-500:focus { border-color: #f05a3c !important; }
+.shadow-indigo-200 { --tw-shadow-color: rgb(240 90 60 / 0.18) !important; }
+.bg-purple-500 { background-color: #0f766e !important; }
+.text-purple-500, .text-purple-600, .text-purple-700 { color: #0f766e !important; }
+.bg-purple-100, .bg-purple-50 { background-color: #e7f5f2 !important; }
+.bg-orange-600 { background-color: #e4573d !important; }
+.hover\:bg-orange-700:hover { background-color: #c9452e !important; }
+.bg-orange-500 { background-color: #eb765f !important; }
+.bg-orange-100 { background-color: #fff0eb !important; }
+.bg-orange-50 { background-color: #fff7f4 !important; }
+.text-orange-600, .text-orange-700 { color: #c9452e !important; }
+.text-orange-500 { color: #e4573d !important; }
+.text-orange-300 { color: #ffb3a2 !important; }
+.border-orange-200, .border-orange-100 { border-color: #f2c8bd !important; }
+.focus\:ring-orange-500:focus { --tw-ring-color: rgb(228 87 61 / 0.3) !important; }
+.focus\:border-orange-500:focus { border-color: #e4573d !important; }
 
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out;

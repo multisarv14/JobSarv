@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { User, Application, EmployerJob, Plan, Candidate, MessageThread, ChatMessage } from '../types';
+import { User, Application, EmployerJob, Plan, Candidate, MessageThread, ChatMessage, Job } from '../types';
 import { MOCK_EMPLOYER_JOBS, MOCK_APPLICATIONS, EMPLOYER_PLANS, MOCK_CANDIDATES, MOCK_MESSAGE_THREADS, MOCK_CHAT_HISTORY } from '../constants';
+import { auth } from '../services/firebase';
+import { createJob } from '../services/jobService';
 
 interface EmployerDashboardPageProps {
     user: User;
@@ -252,6 +254,77 @@ const PlaceholderSection: React.FC<{title: string}> = ({title}) => (
     </div>
 );
 
+const PostJobSection: React.FC = () => {
+    const [form, setForm] = useState({
+        title: '', company: '', location: '', type: 'Full-time' as Job['type'],
+        workModel: 'Hybrid' as Job['workModel'], experienceLevel: 'Mid-level' as Job['experienceLevel'],
+        salary: '', minSalary: '', maxSalary: '', description: '', tags: '',
+    });
+    const [isSaving, setIsSaving] = useState(false);
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
+
+    const updateField = (field: keyof typeof form, value: string) => {
+        setForm(current => ({ ...current, [field]: value }));
+    };
+
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
+        setMessage('');
+        setError('');
+        const employerId = auth.currentUser?.uid;
+        if (!employerId) {
+            setError('Your session has expired. Please sign in again.');
+            return;
+        }
+        if (!form.title.trim() || !form.company.trim() || !form.location.trim() || !form.description.trim()) {
+            setError('Please complete the required fields.');
+            return;
+        }
+
+        setIsSaving(true);
+        try {
+            await createJob({
+                title: form.title.trim(), company: form.company.trim(), location: form.location.trim(),
+                type: form.type, workModel: form.workModel, experienceLevel: form.experienceLevel,
+                salary: form.salary.trim(), minSalary: Number(form.minSalary) || 0, maxSalary: Number(form.maxSalary) || 0,
+                description: form.description.trim(), tags: form.tags.split(',').map(tag => tag.trim()).filter(Boolean),
+                logo: `https://picsum.photos/seed/${form.company.trim()}/100`, recommended: false,
+            }, employerId);
+            setForm(current => ({ ...current, title: '', location: '', salary: '', minSalary: '', maxSalary: '', description: '', tags: '' }));
+            setMessage('Job posted successfully. It is now visible in Find Jobs.');
+        } catch (submitError) {
+            console.error('Failed to post job:', submitError);
+            setError('The job could not be posted. Please try again.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    return (
+        <div className="bg-white p-8 rounded-lg shadow-sm max-w-4xl">
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">Post a New Job</h2>
+            <p className="text-gray-500 mb-6">Add a role and publish it to the Jobsarv listing.</p>
+            {message && <p className="mb-4 rounded-md bg-green-50 p-3 text-sm text-green-700">{message}</p>}
+            {error && <p className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <label className="md:col-span-2 text-sm font-medium text-gray-700">Job title *<input value={form.title} onChange={event => updateField('title', event.target.value)} className="mt-1 w-full rounded-md border-gray-300" required /></label>
+                <label className="text-sm font-medium text-gray-700">Company *<input value={form.company} onChange={event => updateField('company', event.target.value)} className="mt-1 w-full rounded-md border-gray-300" required /></label>
+                <label className="text-sm font-medium text-gray-700">Location *<input value={form.location} onChange={event => updateField('location', event.target.value)} className="mt-1 w-full rounded-md border-gray-300" required /></label>
+                <label className="text-sm font-medium text-gray-700">Job type<select value={form.type} onChange={event => updateField('type', event.target.value)} className="mt-1 w-full rounded-md border-gray-300"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option><option>Freelance</option></select></label>
+                <label className="text-sm font-medium text-gray-700">Work model<select value={form.workModel} onChange={event => updateField('workModel', event.target.value)} className="mt-1 w-full rounded-md border-gray-300"><option>Remote</option><option>Hybrid</option><option>On-site</option></select></label>
+                <label className="text-sm font-medium text-gray-700">Experience level<select value={form.experienceLevel} onChange={event => updateField('experienceLevel', event.target.value)} className="mt-1 w-full rounded-md border-gray-300"><option>Entry-level</option><option>Mid-level</option><option>Senior-level</option><option>Lead</option></select></label>
+                <label className="text-sm font-medium text-gray-700">Salary display<input value={form.salary} onChange={event => updateField('salary', event.target.value)} placeholder="$90k - $120k" className="mt-1 w-full rounded-md border-gray-300" /></label>
+                <label className="text-sm font-medium text-gray-700">Minimum salary<input type="number" value={form.minSalary} onChange={event => updateField('minSalary', event.target.value)} className="mt-1 w-full rounded-md border-gray-300" /></label>
+                <label className="text-sm font-medium text-gray-700">Maximum salary<input type="number" value={form.maxSalary} onChange={event => updateField('maxSalary', event.target.value)} className="mt-1 w-full rounded-md border-gray-300" /></label>
+                <label className="md:col-span-2 text-sm font-medium text-gray-700">Skills, comma separated<input value={form.tags} onChange={event => updateField('tags', event.target.value)} placeholder="React, TypeScript, APIs" className="mt-1 w-full rounded-md border-gray-300" /></label>
+                <label className="md:col-span-2 text-sm font-medium text-gray-700">Description *<textarea value={form.description} onChange={event => updateField('description', event.target.value)} rows={6} className="mt-1 w-full rounded-md border-gray-300" required /></label>
+                <button type="submit" disabled={isSaving} className="md:col-span-2 justify-self-start rounded-md bg-indigo-600 px-5 py-2.5 font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-400">{isSaving ? 'Publishing...' : 'Publish Job'}</button>
+            </form>
+        </div>
+    );
+};
+
 
 const EmployerDashboardPage: React.FC<EmployerDashboardPageProps> = ({ user, initialSection, setInitialSection }) => {
     const [activeSection, setActiveSection] = useState(initialSection || 'dashboard-section');
@@ -266,7 +339,7 @@ const EmployerDashboardPage: React.FC<EmployerDashboardPageProps> = ({ user, ini
     const renderSection = () => {
         switch (activeSection) {
             case 'dashboard-section': return <DashboardSection user={user} />;
-            case 'post-job-section': return <PlaceholderSection title="Post a New Job" />;
+            case 'post-job-section': return <PostJobSection />;
             case 'manage-jobs-section': return <PlaceholderSection title="Manage Jobs" />;
             case 'applications-section': return <ApplicationsSection />;
             case 'browse-resumes-section': return <BrowseResumesSection />;
@@ -279,15 +352,15 @@ const EmployerDashboardPage: React.FC<EmployerDashboardPageProps> = ({ user, ini
     };
     
     return (
-        <div className="flex min-h-[calc(100vh-64px)] bg-gray-100">
+        <div className="flex min-h-[calc(100vh-64px)] flex-col bg-slate-100 lg:flex-row">
             {/* Left Sidebar */}
-            <aside className="w-64 bg-white border-r border-gray-200 flex-shrink-0 p-4">
+            <aside className="w-full bg-white border-b border-gray-200 flex-shrink-0 p-4 lg:w-64 lg:border-b-0 lg:border-r">
                  <div className="text-center mb-8 pt-4">
                     <img src={`https://picsum.photos/seed/${user.email}/80`} alt="User Avatar" className="w-20 h-20 rounded-full mx-auto mb-2 border-2 border-indigo-200"/>
                     <h6 className="font-semibold text-gray-800">{user.fullName}</h6>
                     <span className="text-xs text-gray-500">Employer</span>
                 </div>
-                <nav className="flex-grow space-y-2">
+                <nav className="flex flex-wrap gap-2 lg:block lg:space-y-2">
                     <SidebarLink icon="dashboard" label="Dashboard" sectionId="dashboard-section" activeSection={activeSection} onClick={() => setActiveSection('dashboard-section')} />
                     <SidebarLink icon="post" label="Post a Job" sectionId="post-job-section" activeSection={activeSection} onClick={() => setActiveSection('post-job-section')} />
                     <SidebarLink icon="jobs" label="Manage Jobs" sectionId="manage-jobs-section" activeSection={activeSection} onClick={() => setActiveSection('manage-jobs-section')} />
@@ -301,7 +374,7 @@ const EmployerDashboardPage: React.FC<EmployerDashboardPageProps> = ({ user, ini
             </aside>
 
             {/* Right Content Area */}
-            <main key={activeSection} className="flex-1 p-8 overflow-y-auto animate-fade-in">
+            <main key={activeSection} className="flex-1 p-4 overflow-y-auto animate-fade-in sm:p-6 lg:p-8">
                  {renderSection()}
             </main>
         </div>

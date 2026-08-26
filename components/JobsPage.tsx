@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Job, Resume, User, Page } from '../types';
-import { MOCK_JOBS } from '../constants';
 import { generateResumeContentStream } from '../services/geminiService';
+import { getJobs } from '../services/jobService';
 import JobCard from './JobCard';
 
 interface MatchInfo {
@@ -43,12 +43,24 @@ const JobsPage: React.FC<JobsPageProps> = ({ resume, user, setCurrentPage, saved
     const [experienceLevel, setExperienceLevel] = useState('All');
     const [salaryRange, setSalaryRange] = useState('All');
     const [isMatching, setIsMatching] = useState(false);
+    const [jobs, setJobs] = useState<Job[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadError, setLoadError] = useState('');
     const [matchScores, setMatchScores] = useState<{ [key: number]: MatchInfo | null }>({});
     const [sortBy, setSortBy] = useState<'default' | 'match_desc' | 'match_asc'>('default');
 
+    useEffect(() => {
+        getJobs()
+            .then(setJobs)
+            .catch(error => {
+                console.error('Failed to load jobs:', error);
+                setLoadError('Jobs could not be loaded right now. Please try again later.');
+            })
+            .finally(() => setIsLoading(false));
+    }, []);
 
     const filteredJobs = useMemo(() => {
-        return MOCK_JOBS.filter(job => {
+        return jobs.filter(job => {
             const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) || job.company.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesLocation = job.location.toLowerCase().includes(location.toLowerCase());
             const matchesType = jobType === 'All' || job.type === jobType;
@@ -61,7 +73,7 @@ const JobsPage: React.FC<JobsPageProps> = ({ resume, user, setCurrentPage, saved
 
             return matchesSearch && matchesLocation && matchesType && matchesWorkModel && matchesExperience && matchesSalary;
         });
-    }, [searchTerm, location, jobType, workModel, experienceLevel, salaryRange]);
+    }, [jobs, searchTerm, location, jobType, workModel, experienceLevel, salaryRange]);
     
     // Clear scores and sorting when filters change
     useEffect(() => {
@@ -166,7 +178,7 @@ ${filteredJobs.map(job => `
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     placeholder="e.g., React Developer"
-                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                                 />
                             </div>
                             <div>
@@ -177,7 +189,7 @@ ${filteredJobs.map(job => `
                                     value={location}
                                     onChange={(e) => setLocation(e.target.value)}
                                     placeholder="e.g., San Francisco"
-                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                                 />
                             </div>
                             <div>
@@ -186,7 +198,7 @@ ${filteredJobs.map(job => `
                                     id="jobType"
                                     value={jobType}
                                     onChange={(e) => setJobType(e.target.value)}
-                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md"
                                 >
                                     <option>All</option>
                                     <option>Full-time</option>
@@ -200,7 +212,7 @@ ${filteredJobs.map(job => `
                                     id="workModel"
                                     value={workModel}
                                     onChange={(e) => setWorkModel(e.target.value)}
-                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md"
                                 >
                                     <option>All</option>
                                     <option>On-site</option>
@@ -214,7 +226,7 @@ ${filteredJobs.map(job => `
                                     id="experienceLevel"
                                     value={experienceLevel}
                                     onChange={(e) => setExperienceLevel(e.target.value)}
-                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md"
                                 >
                                     <option>All</option>
                                     <option>Entry-level</option>
@@ -229,7 +241,7 @@ ${filteredJobs.map(job => `
                                     id="salaryRange"
                                     value={salaryRange}
                                     onChange={(e) => setSalaryRange(e.target.value)}
-                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md"
                                 >
                                     {Object.entries(salaryRanges).map(([key, value]) => (
                                         <option key={key} value={key}>{value}</option>
@@ -251,7 +263,7 @@ ${filteredJobs.map(job => `
                                     id="sortBy"
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value as 'default' | 'match_desc' | 'match_asc')}
-                                    className="pl-3 pr-8 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                    className="pl-3 pr-8 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md disabled:bg-gray-100 disabled:cursor-not-allowed"
                                     disabled={Object.keys(matchScores).length === 0}
                                     title={Object.keys(matchScores).length === 0 ? 'Analyze matches to enable sorting by score' : 'Sort by match score'}
                                 >
@@ -265,7 +277,7 @@ ${filteredJobs.map(job => `
                              <button
                                 onClick={handleAnalyzeMatches}
                                 disabled={isMatching || !canAnalyze}
-                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors"
                             >
                                 {isMatching ? <GeneratingIcon /> : (
                                     <svg xmlns="http://www.w3.org/2000/svg" className="-ml-1 mr-2 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -277,7 +289,16 @@ ${filteredJobs.map(job => `
                         </div>
                     </div>
                     
-                    {displayedJobs.length > 0 ? (
+                    {isLoading ? (
+                        <div className="bg-white text-center p-12 rounded-lg shadow-md">
+                            <p className="text-gray-600">Loading jobs...</p>
+                        </div>
+                    ) : loadError ? (
+                        <div className="bg-white text-center p-12 rounded-lg shadow-md">
+                            <h3 className="text-xl font-semibold text-gray-800">Unable to load jobs</h3>
+                            <p className="mt-2 text-gray-500">{loadError}</p>
+                        </div>
+                    ) : displayedJobs.length > 0 ? (
                         displayedJobs.map(job => <JobCard key={job.id} job={job} matchInfo={matchScores[job.id] || null} user={user} setCurrentPage={setCurrentPage} savedJobIds={savedJobIds} toggleSaveJob={toggleSaveJob} onTailorResume={handleTailorResume} onViewDetails={setSelectedJobForModal} />)
                     ) : (
                         <div className="bg-white text-center p-12 rounded-lg shadow-md">

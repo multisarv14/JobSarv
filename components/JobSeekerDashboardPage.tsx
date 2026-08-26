@@ -262,15 +262,15 @@ const JobSeekerDashboardPage: React.FC<JobSeekerDashboardPageProps> = ({ user, s
     };
     
     return (
-        <div className="flex min-h-[calc(100vh-64px)] bg-gray-100">
+        <div className="flex min-h-[calc(100vh-64px)] flex-col bg-slate-100 lg:flex-row">
             {/* Left Sidebar */}
-            <aside className="w-64 bg-white border-r border-gray-200 flex-shrink-0 p-4">
+            <aside className="w-full bg-white border-b border-gray-200 flex-shrink-0 p-4 lg:w-64 lg:border-b-0 lg:border-r">
                  <div className="text-center mb-8 pt-4">
                     <img src={`https://picsum.photos/seed/${user.email}/80`} alt="User Avatar" className="w-20 h-20 rounded-full mx-auto mb-2 border-2 border-indigo-200"/>
                     <h6 className="font-semibold text-gray-800">{user.fullName}</h6>
                     <span className="text-xs text-gray-500">Job Seeker</span>
                 </div>
-                <nav className="flex-grow space-y-2">
+                <nav className="flex flex-wrap gap-2 lg:block lg:space-y-2">
                     <SidebarLink icon="dashboard" label="My Dashboard" sectionId="dashboard-section" activeSection={activeSection} onClick={() => setActiveSection('dashboard-section')} />
                     <SidebarLink icon="saved" label="Saved Jobs" sectionId="saved-jobs-section" activeSection={activeSection} onClick={() => setActiveSection('saved-jobs-section')} />
                     <SidebarLink icon="applications" label="Applications" sectionId="applications-section" activeSection={activeSection} onClick={() => setActiveSection('applications-section')} />
@@ -285,7 +285,7 @@ const JobSeekerDashboardPage: React.FC<JobSeekerDashboardPageProps> = ({ user, s
             </aside>
 
             {/* Right Content Area */}
-            <main key={activeSection} className="flex-1 p-8 overflow-y-auto animate-fade-in">
+            <main key={activeSection} className="flex-1 p-4 overflow-y-auto animate-fade-in sm:p-6 lg:p-8">
                  {renderSection()}
             </main>
         </div>

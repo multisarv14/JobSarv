@@ -7,6 +7,7 @@ export enum Page {
     SignUp = 'SIGNUP',
     EmployerSignUp = 'EMPLOYER_SIGNUP',
     EmployerDashboard = 'EMPLOYER_DASHBOARD',
+    AdminDashboard = 'ADMIN_DASHBOARD',
     JobSeekerDashboard = 'JOB_SEEKER_DASHBOARD',
     // Existing Menu Pages
     CareerTools = 'CAREER_TOOLS',
@@ -33,7 +34,7 @@ export enum Page {
 export interface User {
     fullName: string;
     email: string;
-    role: 'seeker' | 'employer';
+    role: 'seeker' | 'employer' | 'admin';
     plan: string; // e.g., 'Free Seeker', 'Pro Employer'
 }
 

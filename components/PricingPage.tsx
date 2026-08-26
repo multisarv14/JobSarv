@@ -3,10 +3,10 @@ import { Plan } from '../types';
 import { JOB_SEEKER_PLANS, EMPLOYER_PLANS } from '../constants';
 
 const PlanCard: React.FC<{ plan: Plan }> = ({ plan }) => (
-    <div className={`border rounded-lg shadow-lg p-8 flex flex-col ${plan.isPopular ? 'border-indigo-500 ring-2 ring-indigo-500' : 'border-gray-200'}`}>
+    <div className={`border rounded-lg shadow-lg p-8 flex flex-col ${plan.isPopular ? 'border-orange-500 ring-2 ring-orange-500' : 'border-gray-200'}`}>
         {plan.isPopular && (
             <div className="text-center">
-                <span className="inline-block bg-indigo-500 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase">Most Popular</span>
+                <span className="inline-block bg-orange-500 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase">Most Popular</span>
             </div>
         )}
         <h3 className="text-2xl font-semibold text-gray-800 text-center mt-4">{plan.name}</h3>
@@ -28,8 +28,8 @@ const PlanCard: React.FC<{ plan: Plan }> = ({ plan }) => (
             <button
                 className={`w-full px-6 py-3 text-base font-medium rounded-md transition-colors ${
                     plan.isPopular
-                        ? 'text-white bg-indigo-600 hover:bg-indigo-700'
-                        : 'text-indigo-700 bg-indigo-100 hover:bg-indigo-200'
+                        ? 'text-white bg-orange-600 hover:bg-orange-700'
+                        : 'text-orange-700 bg-orange-100 hover:bg-orange-200'
                 }`}
             >
                 Choose Plan

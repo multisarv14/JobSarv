@@ -59,21 +59,22 @@ const CareerCoachAIPage: React.FC = () => {
     };
 
     return (
-        <div className="bg-gray-800 text-white min-h-[calc(100vh-128px)] flex flex-col animate-fade-in">
-            <header className="bg-gray-900/50 backdrop-blur-sm p-4 border-b border-gray-700 text-center">
-                <h1 className="text-2xl font-bold text-indigo-400">AI Career Coach</h1>
-                <p className="text-sm text-gray-400">Your personal guide to career success.</p>
+        <div className="bg-[#f8f7f3] text-slate-900 min-h-[calc(100vh-128px)] flex flex-col animate-fade-in">
+            <header className="bg-white p-6 border-b border-slate-200 text-center">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-orange-600">Personal career guidance</p>
+                <h1 className="text-3xl font-bold text-slate-900 mt-2">AI Career Coach</h1>
+                <p className="text-sm text-slate-500 mt-1">Clear advice for your next career move.</p>
             </header>
             
-            <main className="flex-1 overflow-y-auto p-6 space-y-6">
+            <main className="flex-1 overflow-y-auto p-6 space-y-6 max-w-4xl w-full mx-auto">
                 {messages.map((msg) => (
                     <div key={msg.id} className={`flex items-end gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                         {msg.sender === 'ai' && (
-                            <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center flex-shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center flex-shrink-0">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 5a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1V8a1 1 0 011-1zm10-5a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0V6h-1a1 1 0 110-2h1V3a1 1 0 011-1zM5.293 16.293a1 1 0 011.414 0L10 19.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                             </div>
                         )}
-                        <div className={`max-w-lg p-4 rounded-xl whitespace-pre-wrap ${msg.sender === 'user' ? 'bg-indigo-600 rounded-br-none' : 'bg-gray-700 rounded-bl-none'}`}>
+                        <div className={`max-w-lg p-4 rounded-2xl whitespace-pre-wrap shadow-sm ${msg.sender === 'user' ? 'bg-orange-600 text-white rounded-br-none' : 'bg-white border border-slate-200 text-slate-700 rounded-bl-none'}`}>
                            {msg.text || (isLoading && msg.sender === 'ai' ? <div className="dot-flashing"></div> : '')}
                         </div>
                     </div>
@@ -81,7 +82,7 @@ const CareerCoachAIPage: React.FC = () => {
                  <div ref={messagesEndRef} />
             </main>
 
-            <footer className="p-4 bg-gray-900/50 backdrop-blur-sm border-t border-gray-700">
+            <footer className="p-4 bg-white border-t border-slate-200">
                 <div className="max-w-3xl mx-auto">
                     <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex items-center gap-3">
                         <input
@@ -89,9 +90,9 @@ const CareerCoachAIPage: React.FC = () => {
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             placeholder="Ask me anything about your career..."
-                            className="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 px-4 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                            className="w-full bg-slate-50 border border-slate-300 rounded-lg py-3 px-4 focus:ring-2 focus:ring-orange-500 focus:outline-none"
                         />
-                        <button type="submit" disabled={isLoading} className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 rounded-lg px-5 py-2 flex items-center justify-center font-semibold transition-colors">
+                        <button type="submit" disabled={isLoading} className="bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 rounded-lg px-5 py-2 flex items-center justify-center font-semibold text-white transition-colors">
                             {isLoading ? <GeneratingIcon /> : 'Send'}
                         </button>
                     </form>

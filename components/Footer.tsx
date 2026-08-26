@@ -1,6 +1,12 @@
 import React from 'react';
+import { Page } from '../types';
 
-const Footer = () => {
+const Footer: React.FC<{ setCurrentPage?: (page: Page) => void }> = ({ setCurrentPage }) => {
+    const goTo = (page: Page) => (event: React.MouseEvent<HTMLAnchorElement>) => {
+        event.preventDefault();
+        setCurrentPage?.(page);
+    };
+
     return (
         <footer className="bg-white border-t border-gray-100">
             <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -19,18 +25,18 @@ const Footer = () => {
                             <div>
                                 <h3 className="text-xs font-bold text-gray-400 tracking-wider uppercase">Job Seekers</h3>
                                 <ul className="mt-2 space-y-1.5">
-                                    <li><a href="#" className="text-xs text-gray-500 hover:text-indigo-600">Find Jobs</a></li>
-                                    <li><a href="#" className="text-xs text-gray-500 hover:text-indigo-600">Resume Builder</a></li>
-                                    <li><a href="#" className="text-xs text-gray-500 hover:text-indigo-600">Career Tools</a></li>
-                                    <li><a href="#" className="text-xs text-gray-500 hover:text-indigo-600">Salary Insights</a></li>
+                                    <li><a href="#find-jobs" onClick={goTo(Page.FindJobs)} className="text-xs text-gray-500 hover:text-indigo-600">Find Jobs</a></li>
+                                    <li><a href="#resume-builder" onClick={goTo(Page.ResumeBuilder)} className="text-xs text-gray-500 hover:text-indigo-600">Resume Builder</a></li>
+                                    <li><a href="#career-tools" onClick={goTo(Page.CareerTools)} className="text-xs text-gray-500 hover:text-indigo-600">Career Tools</a></li>
+                                    <li><a href="#salary-insights" onClick={goTo(Page.SalaryInsights)} className="text-xs text-gray-500 hover:text-indigo-600">Salary Insights</a></li>
                                 </ul>
                             </div>
                             <div>
                                 <h3 className="text-xs font-bold text-gray-400 tracking-wider uppercase">Employers</h3>
                                 <ul className="mt-2 space-y-1.5">
-                                    <li><a href="#" className="text-xs text-gray-500 hover:text-indigo-600">Post a Job</a></li>
-                                    <li><a href="#" className="text-xs text-gray-500 hover:text-indigo-600">Browse Resumes</a></li>
-                                    <li><a href="#" className="text-xs text-gray-500 hover:text-indigo-600">Plans & Pricing</a></li>
+                                    <li><a href="#post-job" onClick={goTo(Page.EmployerSignUp)} className="text-xs text-gray-500 hover:text-indigo-600">Post a Job</a></li>
+                                    <li><a href="#employer" onClick={goTo(Page.EmployerSignUp)} className="text-xs text-gray-500 hover:text-indigo-600">Browse Resumes</a></li>
+                                    <li><a href="#pricing" onClick={goTo(Page.PlansPricing)} className="text-xs text-gray-500 hover:text-indigo-600">Plans & Pricing</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -38,17 +44,17 @@ const Footer = () => {
                             <div>
                                 <h3 className="text-xs font-bold text-gray-400 tracking-wider uppercase">Resources</h3>
                                 <ul className="mt-2 space-y-1.5">
-                                    <li><a href="#" className="text-xs text-gray-500 hover:text-indigo-600">Skill Hub</a></li>
-                                    <li><a href="#" className="text-xs text-gray-500 hover:text-indigo-600">Events & Webinars</a></li>
-                                    <li><a href="#" className="text-xs text-gray-500 hover:text-indigo-600">Career Blogs</a></li>
+                                    <li><a href="#skill-hub" onClick={goTo(Page.SkillHub)} className="text-xs text-gray-500 hover:text-indigo-600">Skill Hub</a></li>
+                                    <li><a href="#events" onClick={goTo(Page.EventsWebinars)} className="text-xs text-gray-500 hover:text-indigo-600">Events & Webinars</a></li>
+                                    <li><a href="#blogs" onClick={goTo(Page.CareerBlogs)} className="text-xs text-gray-500 hover:text-indigo-600">Career Blogs</a></li>
                                 </ul>
                             </div>
                             <div>
                                 <h3 className="text-xs font-bold text-gray-400 tracking-wider uppercase">Company</h3>
                                 <ul className="mt-2 space-y-1.5">
-                                    <li><a href="#" className="text-xs text-gray-500 hover:text-indigo-600">About</a></li>
-                                    <li><a href="#" className="text-xs text-gray-500 hover:text-indigo-600">Contact</a></li>
-                                    <li><a href="#" className="text-xs text-gray-500 hover:text-indigo-600">Privacy & Terms</a></li>
+                                    <li><a href="#about" onClick={goTo(Page.AboutContact)} className="text-xs text-gray-500 hover:text-indigo-600">About</a></li>
+                                    <li><a href="#contact" onClick={goTo(Page.AboutContact)} className="text-xs text-gray-500 hover:text-indigo-600">Contact</a></li>
+                                    <li><a href="#terms" onClick={goTo(Page.AboutContact)} className="text-xs text-gray-500 hover:text-indigo-600">Privacy & Terms</a></li>
                                 </ul>
                             </div>
                         </div>

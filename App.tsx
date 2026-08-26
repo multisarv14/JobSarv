@@ -7,6 +7,7 @@ import JobsPage from './components/JobsPage';
 import ResumeBuilderPage from './components/ResumeBuilderPage';
 import AuthPage from './components/AuthPage';
 import EmployerDashboardPage from './components/EmployerDashboardPage';
+import AdminDashboardPage from './components/AdminDashboardPage';
 import JobSeekerDashboardPage from './components/JobSeekerDashboardPage';
 import JobDetailModal from './components/JobDetailModal';
 import PricingPage from './components/PricingPage';
@@ -18,6 +19,9 @@ import CompaniesPage from './components/CompaniesPage';
 import SalaryInsightsPage from './components/SalaryInsightsPage';
 import AboutContactPage from './components/AboutContactPage';
 import PlaceholderPage from './components/PlaceholderPage';
+import { auth } from './services/firebase';
+import { getCurrentUserProfile, logout } from './services/authService';
+import { onAuthStateChanged } from 'firebase/auth';
 
 // Innovative Tools Pages
 import CareerCoachAIPage from './components/innovative-tools/CareerCoachAIPage';
@@ -74,6 +78,24 @@ const App: React.FC = () => {
         }
     }, []);
 
+    useEffect(() => {
+        return onAuthStateChanged(auth, async (firebaseUser) => {
+            if (!firebaseUser) {
+                setUser(null);
+                return;
+            }
+
+            try {
+                const profile = await getCurrentUserProfile(firebaseUser);
+                if (profile) {
+                    setUser(profile);
+                }
+            } catch (error) {
+                console.error('Failed to restore the Firebase session', error);
+            }
+        });
+    }, []);
+
     const toggleSaveJob = (jobId: number) => {
         setSavedJobIds(prevSavedIds => {
             const isSaved = prevSavedIds.includes(jobId);
@@ -94,7 +116,8 @@ const App: React.FC = () => {
         }
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await logout();
         setUser(null);
         setCurrentPage(Page.Home);
     };
@@ -123,6 +146,8 @@ const App: React.FC = () => {
                 return <AuthPage mode="signup" setCurrentPage={setCurrentPage} onLogin={handleLogin} initialRole="employer" />;
             case Page.EmployerDashboard:
                 return user?.role === 'employer' ? <EmployerDashboardPage user={user} initialSection={dashboardSection} setInitialSection={setDashboardSection} /> : <HomePage {...commonPageProps} />;
+            case Page.AdminDashboard:
+                return user?.role === 'admin' ? <AdminDashboardPage user={user} /> : <HomePage {...commonPageProps} />;
             case Page.JobSeekerDashboard:
                 return user?.role === 'seeker' ? <JobSeekerDashboardPage {...commonPageProps} /> : <HomePage {...commonPageProps} />;
             case Page.PlansPricing:
@@ -183,7 +208,7 @@ const App: React.FC = () => {
             <main className="flex-grow">
                 {renderPage()}
             </main>
-            {showFooter && <Footer />}
+            {showFooter && <Footer setCurrentPage={setCurrentPage} />}
              <JobDetailModal
                 job={selectedJobForModal}
                 user={user}
