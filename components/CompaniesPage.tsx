@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { Search, MapPin, Users, Star, ArrowRight } from 'lucide-react';
 import { MOCK_COMPANY_DI_PROFILES } from '../constants';
 
 const CompaniesPage: React.FC = () => {
+    const [search, setSearch] = useState('');
+    const [selectedCompany, setSelectedCompany] = useState<typeof MOCK_COMPANY_DI_PROFILES[number] | null>(null);
+    const companies = useMemo(() => MOCK_COMPANY_DI_PROFILES.filter(company => `${company.name} ${company.industry}`.toLowerCase().includes(search.toLowerCase())), [search]);
+
     return (
         <div className="bg-gray-50 min-h-screen py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,6 +31,8 @@ const CompaniesPage: React.FC = () => {
                     <div className="mt-8 max-w-xl mx-auto relative">
                         <input 
                             type="text" 
+                            value={search}
+                            onChange={event => setSearch(event.target.value)}
                             placeholder="Search companies by name or industry..." 
                             className="w-full px-5 py-4 pl-12 rounded-2xl border-none shadow-lg focus:ring-2 focus:ring-indigo-500 transition-shadow"
                         />
@@ -35,7 +41,7 @@ const CompaniesPage: React.FC = () => {
                 </header>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {MOCK_COMPANY_DI_PROFILES.map((company, index) => (
+                    {companies.map((company, index) => (
                         <motion.div 
                             key={company.id}
                             initial={{ opacity: 0, scale: 0.95 }}
@@ -72,12 +78,13 @@ const CompaniesPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            <button className="w-full flex items-center justify-center gap-2 py-3 bg-gray-900 text-white rounded-2xl font-semibold hover:bg-indigo-600 transition-all">
+                            <button onClick={() => setSelectedCompany(company)} className="w-full flex items-center justify-center gap-2 py-3 bg-gray-900 text-white rounded-2xl font-semibold hover:bg-indigo-600 transition-all">
                                 View Profile <ArrowRight className="h-4 w-4" />
                             </button>
                         </motion.div>
                     ))}
                 </div>
+                {selectedCompany && <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4" onClick={() => setSelectedCompany(null)}><div className="w-full max-w-md rounded-2xl bg-white p-8" onClick={event => event.stopPropagation()}><div className="flex items-center gap-4"><img src={selectedCompany.logo} alt={selectedCompany.name} className="h-16 w-16 rounded-xl object-contain" /><div><h2 className="text-2xl font-bold text-gray-900">{selectedCompany.name}</h2><p className="text-sm text-gray-500">{selectedCompany.industry}</p></div></div><p className="mt-6 text-gray-600">Explore open roles and learn more about this workplace on Jobsarv.</p><button onClick={() => setSelectedCompany(null)} className="mt-6 rounded-lg bg-indigo-600 px-4 py-2 font-bold text-white">Close</button></div></div>}
             </div>
         </div>
     );
