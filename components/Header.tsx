@@ -174,7 +174,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage, user, onLo
     return (
         <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
             <div className="px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-[4.5rem] max-w-[1440px] mx-auto">
+                <div className="flex items-center justify-between h-16 max-w-[1440px] mx-auto">
                     <div className="flex items-center">
                         <button onClick={() => setCurrentPage(Page.Home)} className="flex-shrink-0 flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">

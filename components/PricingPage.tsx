@@ -42,18 +42,18 @@ const PlanCard: React.FC<{ plan: Plan }> = ({ plan }) => (
 const PricingPage: React.FC = () => {
     return (
         <div className="bg-white animate-fade-in">
-            <div className="max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto py-14 px-4 sm:px-6 lg:px-8">
                 <div className="sm:flex sm:flex-col sm:align-center text-center">
-                    <h1 className="text-5xl font-extrabold text-gray-900 sm:text-6xl">
+                    <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl">
                         Our Pricing Plans
                     </h1>
-                    <p className="mt-5 text-xl text-gray-500">
+                    <p className="mt-4 text-lg text-gray-500">
                         Choose the perfect plan to accelerate your career or hiring process.
                     </p>
                 </div>
 
-                <div className="mt-16">
-                    <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-10">For Job Seekers</h2>
+                <div className="mt-12">
+                    <h2 className="text-2xl font-extrabold text-gray-900 text-center mb-7">For Job Seekers</h2>
                      <div className="max-w-lg mx-auto grid gap-8 lg:grid-cols-2 lg:max-w-none">
                         {JOB_SEEKER_PLANS.map(plan => (
                             <PlanCard key={plan.name} plan={plan} />
@@ -61,8 +61,8 @@ const PricingPage: React.FC = () => {
                     </div>
                 </div>
 
-                 <div className="mt-20">
-                    <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-10">For Employers</h2>
+                      <div className="mt-14">
+                          <h2 className="text-2xl font-extrabold text-gray-900 text-center mb-7">For Employers</h2>
                      <div className="max-w-lg mx-auto grid gap-8 lg:grid-cols-2 lg:max-w-none">
                         {EMPLOYER_PLANS.map(plan => (
                             <PlanCard key={plan.name} plan={plan} />

@@ -24,6 +24,15 @@
 html { scrollbar-width: none; }
 html::-webkit-scrollbar { width: 0; height: 0; }
 
+/* Keep desktop pages information-dense without reducing mobile readability. */
+@media (min-width: 768px) {
+  html { font-size: 93.75%; }
+}
+
+@media (min-width: 1280px) {
+  html { font-size: 90%; }
+}
+
 /* Keep legacy pages on the same Jobsarv brand while they are being refreshed. */
 .bg-indigo-600 { background-color: #f05a3c !important; }
 .bg-indigo-900 { background-color: #14212b !important; }
