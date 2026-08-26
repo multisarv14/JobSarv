@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Job, Resume, User, Page } from '../types';
+import { MOCK_JOBS } from '../constants';
 import { generateResumeContentStream } from '../services/geminiService';
 import { getJobs } from '../services/jobService';
 import JobCard from './JobCard';
@@ -51,7 +52,7 @@ const JobsPage: React.FC<JobsPageProps> = ({ resume, user, setCurrentPage, saved
 
     useEffect(() => {
         getJobs()
-            .then(setJobs)
+            .then(loadedJobs => setJobs(loadedJobs.length > 0 ? loadedJobs : MOCK_JOBS))
             .catch(error => {
                 console.error('Failed to load jobs:', error);
                 setLoadError('Jobs could not be loaded right now. Please try again later.');

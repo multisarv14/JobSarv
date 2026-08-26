@@ -60,6 +60,8 @@ const ResumeBuilderPage: React.FC<ResumeBuilderPageProps> = ({ resume, setResume
     const [activeTemplate, setActiveTemplate] = useState('modern');
     const [isGenerating, setIsGenerating] = useState<string | null>(null);
     const [showLoginModal, setShowLoginModal] = useState(false);
+    const [currentStep, setCurrentStep] = useState(1);
+    const steps = ['Contact', 'Experience', 'Education & Skills', 'Cover Letter'];
 
     const handleGenerate = useCallback(async (field: keyof Resume, prompt: string, id?: string) => {
         const generationKey = id ? `${field}-${id}` : field;
@@ -183,6 +185,15 @@ Highlight the user's most relevant skills and experience that match this specifi
                 {/* Center - Form */}
                 <main className="col-span-12 lg:col-span-5">
                     <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-150 space-y-5">
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+                            {steps.map((step, index) => (
+                                <button key={step} type="button" onClick={() => setCurrentStep(index + 1)} className="flex flex-col items-center gap-2 text-[10px] font-bold uppercase tracking-wide">
+                                    <span className={`flex h-7 w-7 items-center justify-center rounded-full ${currentStep === index + 1 ? 'bg-orange-600 text-white' : currentStep > index + 1 ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-400'}`}>{index + 1}</span>
+                                    <span className={currentStep === index + 1 ? 'text-orange-700' : 'text-slate-400'}>{step}</span>
+                                </button>
+                            ))}
+                        </div>
+                        {currentStep === 1 && <>
                         
                         {/* Personal Contact Details */}
                         <div>
@@ -261,7 +272,9 @@ Highlight the user's most relevant skills and experience that match this specifi
                             <AIGenerateButton onClick={() => handleGenerate('summary', `Write a professional, 3-4 sentence resume summary for a person with skills: "${resume.skills}" and a career goal of "${resume.careerGoal}".`)} isGenerating={isGenerating === 'summary'}/>
                         </div>
 
-                         {/* Experience Section */}
+                        </>}
+                        {currentStep === 2 && <>
+                        {/* Experience Section */}
                         <div>
                             <div className="flex justify-between items-center border-b border-gray-100 pb-1.5 mb-2">
                                 <h2 className="text-xs font-bold text-gray-900 uppercase tracking-wide">Work Experience</h2>
@@ -347,6 +360,8 @@ Highlight the user's most relevant skills and experience that match this specifi
                             </div>
                         </div>
 
+                        </>}
+                        {currentStep === 3 && <>
                          {/* Education Section */}
                         <div>
                             <div className="flex justify-between items-center border-b border-gray-100 pb-1.5 mb-2">
@@ -422,6 +437,8 @@ Highlight the user's most relevant skills and experience that match this specifi
                              />
                         </div>
 
+                        </>}
+                        {currentStep === 4 && <>
                          {/* Cover Letter Section */}
                         <div>
                             <h2 className="text-xs font-bold text-gray-900 border-b border-gray-100 pb-1.5 mb-2 uppercase tracking-wide">Cover Letter</h2>
@@ -436,6 +453,11 @@ Highlight the user's most relevant skills and experience that match this specifi
                                 onClick={() => handleGenerate('coverLetter', `Write a compelling cover letter based on this resume summary: "${resume.summary}" and these skills: "${resume.skills}". The tone should be professional and enthusiastic.`)} 
                                 isGenerating={isGenerating === 'coverLetter'}
                             />
+                        </div>
+                        </>}
+                        <div className="flex items-center justify-between border-t border-gray-100 pt-4">
+                            <button type="button" onClick={() => setCurrentStep(step => Math.max(1, step - 1))} disabled={currentStep === 1} className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 disabled:invisible">Back</button>
+                            {currentStep < steps.length ? <button type="button" onClick={() => setCurrentStep(step => Math.min(steps.length, step + 1))} className="rounded-lg bg-orange-600 px-5 py-2 text-sm font-bold text-white hover:bg-orange-700">Continue</button> : <button type="button" onClick={handleDownload} className="rounded-lg bg-orange-600 px-5 py-2 text-sm font-bold text-white hover:bg-orange-700">Finish resume</button>}
                         </div>
                     </div>
                 </main>

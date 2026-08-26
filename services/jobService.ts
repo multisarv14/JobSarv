@@ -2,8 +2,6 @@ import {
     addDoc,
     collection,
     getDocs,
-    orderBy,
-    query,
     serverTimestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
@@ -30,8 +28,10 @@ const toJob = (id: string, data: Record<string, unknown>): Job => ({
 });
 
 export const getJobs = async (): Promise<Job[]> => {
-    const snapshot = await getDocs(query(jobsCollection, orderBy('createdAt', 'desc')));
-    return snapshot.docs.map(document => toJob(document.id, document.data()));
+    const snapshot = await getDocs(jobsCollection);
+    return snapshot.docs
+        .map(document => toJob(document.id, document.data()))
+        .sort((first, second) => second.id - first.id);
 };
 
 export const createJob = async (job: Omit<Job, 'id'>, employerId: string) => {
