@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { User, Page, AppliedJob, Job, Plan } from '../types';
 import { MOCK_APPLIED_JOBS, MOCK_JOBS, JOB_SEEKER_PLANS } from '../constants';
 import JobCard from './JobCard';
+import { generateResumeContentStream } from '../services/geminiService';
 
 interface JobSeekerDashboardPageProps {
     user: User;
@@ -223,13 +224,40 @@ const SubscriptionSection: React.FC<{ user: User }> = ({ user }) => (
     </div>
 );
 
-const PlaceholderSection: React.FC<{title: string}> = ({title}) => (
-    <div className="bg-white p-8 rounded-lg shadow-sm text-center h-full flex flex-col justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-16 w-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-        <h2 className="text-3xl font-bold text-gray-800 mt-4">{title}</h2>
-        <p className="mt-2 text-gray-500">This feature is under construction. Check back soon!</p>
-    </div>
+const SectionShell: React.FC<{ title: string; eyebrow: string; children: React.ReactNode }> = ({ title, eyebrow, children }) => (
+    <section className="rounded-xl bg-white p-5 shadow-sm sm:p-8"><p className="text-xs font-bold uppercase tracking-[0.18em] text-orange-700">{eyebrow}</p><h2 className="mt-2 text-3xl font-bold text-slate-900">{title}</h2><div className="mt-6">{children}</div></section>
 );
+
+const RecommendationsSection: React.FC<Omit<JobSeekerDashboardPageProps, 'user'>> = ({ setCurrentPage, savedJobIds, toggleSaveJob, setSelectedJobForModal }) => (
+    <SectionShell title="Roles selected for you" eyebrow="AI recommendations"><p className="mb-5 text-slate-500">Start with roles that align with the skills in your profile.</p><div className="grid gap-4 lg:grid-cols-2">{MOCK_JOBS.filter(job => job.recommended).map(job => <JobCard key={job.id} job={job} user={null} setCurrentPage={setCurrentPage} savedJobIds={savedJobIds} toggleSaveJob={toggleSaveJob} onViewDetails={setSelectedJobForModal} />)}</div></SectionShell>
+);
+
+const SkillBuilderSection: React.FC = () => {
+    const [skills, setSkills] = useState(['React', 'TypeScript']);
+    const options = ['React', 'TypeScript', 'Node.js', 'SQL', 'Figma', 'Leadership'];
+    return <SectionShell title="Build your skill profile" eyebrow="Skill builder"><p className="text-slate-500">Choose the skills you want employers to notice.</p><div className="mt-5 flex flex-wrap gap-3">{options.map(skill => <button key={skill} onClick={() => setSkills(current => current.includes(skill) ? current.filter(item => item !== skill) : [...current, skill])} className={`rounded-lg border px-4 py-2 text-sm font-semibold ${skills.includes(skill) ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-slate-200 text-slate-600 hover:border-orange-300'}`}>{skills.includes(skill) ? '✓ ' : ''}{skill}</button>)}</div><div className="mt-6 rounded-lg bg-slate-100 p-4"><div className="flex justify-between text-sm font-bold text-slate-700"><span>Profile skill coverage</span><span>{Math.round((skills.length / options.length) * 100)}%</span></div><div className="mt-2 h-2 rounded-full bg-slate-200"><div className="h-2 rounded-full bg-orange-600 transition-all" style={{ width: `${(skills.length / options.length) * 100}%` }} /></div></div></SectionShell>;
+};
+
+const CareerGoalsSection: React.FC = () => {
+    const [goal, setGoal] = useState('Become a Senior Frontend Engineer');
+    const [saved, setSaved] = useState(false);
+    return <SectionShell title="Set your next milestone" eyebrow="Career goals"><label className="block text-sm font-bold text-slate-700">What are you working toward?<textarea value={goal} onChange={event => { setGoal(event.target.value); setSaved(false); }} rows={4} className="mt-2 w-full rounded-lg border border-slate-300 p-3" /></label><button onClick={() => setSaved(true)} className="mt-4 rounded-lg bg-orange-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-orange-700">Save goal</button>{saved && <p className="mt-3 text-sm font-semibold text-emerald-700">Career goal saved to this session.</p>}</SectionShell>;
+};
+
+const AIResumeReviewSection: React.FC = () => {
+    const [review, setReview] = useState('');
+    const [loading, setLoading] = useState(false);
+    const reviewResume = async () => { setLoading(true); setReview(''); try { const stream = await generateResumeContentStream('Review this sample resume profile: 5 years project management and software development experience, skills in React, TypeScript, Node.js, SQL, Figma, and Agile. Give three concise improvements.'); for await (const chunk of stream) setReview(current => current + chunk.text); } catch { setReview('Unable to complete the review right now. Please try again.'); } finally { setLoading(false); } };
+    return <SectionShell title="Improve your resume" eyebrow="AI resume review"><p className="text-slate-500">Get practical feedback on clarity, impact, and role fit.</p><button onClick={reviewResume} disabled={loading} className="mt-5 rounded-lg bg-orange-600 px-5 py-2.5 text-sm font-bold text-white disabled:bg-orange-300">{loading ? 'Reviewing...' : 'Run AI review'}</button>{review && <div className="mt-5 whitespace-pre-wrap rounded-lg bg-slate-50 p-5 text-sm leading-relaxed text-slate-700">{review}</div>}</SectionShell>;
+};
+
+const MockInterviewSection: React.FC = () => {
+    const [answer, setAnswer] = useState('');
+    const [submitted, setSubmitted] = useState(false);
+    return <SectionShell title="Practice before the interview" eyebrow="Mock interview"><div className="rounded-xl bg-slate-900 p-5 text-white"><p className="text-xs font-bold uppercase tracking-wider text-orange-300">Question 1</p><h3 className="mt-2 text-xl font-bold">Tell us about a project you are proud of.</h3></div><textarea value={answer} onChange={event => { setAnswer(event.target.value); setSubmitted(false); }} rows={6} placeholder="Write your answer here..." className="mt-5 w-full rounded-lg border border-slate-300 p-3" /><button onClick={() => setSubmitted(true)} disabled={!answer.trim()} className="mt-3 rounded-lg bg-orange-600 px-5 py-2.5 text-sm font-bold text-white disabled:bg-slate-300">Submit answer</button>{submitted && <p className="mt-3 text-sm font-semibold text-emerald-700">Answer saved. Try to include the situation, action, and measurable result.</p>}</SectionShell>;
+};
+
+const AchievementsSection: React.FC = () => <SectionShell title="Your progress" eyebrow="Achievements"><div className="grid gap-4 sm:grid-cols-3"><div className="rounded-xl bg-orange-50 p-5"><p className="text-3xl font-bold text-orange-700">3</p><p className="mt-1 text-sm font-semibold text-slate-600">Applications sent</p></div><div className="rounded-xl bg-emerald-50 p-5"><p className="text-3xl font-bold text-emerald-700">72%</p><p className="mt-1 text-sm font-semibold text-slate-600">Profile complete</p></div><div className="rounded-xl bg-slate-100 p-5"><p className="text-3xl font-bold text-slate-900">5</p><p className="mt-1 text-sm font-semibold text-slate-600">Skills added</p></div></div><div className="mt-6 rounded-lg border border-slate-200 p-5"><p className="font-bold text-slate-900">Next milestone</p><p className="mt-1 text-sm text-slate-500">Complete your resume summary to unlock the profile-ready badge.</p></div></SectionShell>;
 
 const JobSeekerDashboardPage: React.FC<JobSeekerDashboardPageProps> = ({ user, setCurrentPage, savedJobIds, toggleSaveJob, setSelectedJobForModal }) => {
     const [activeSection, setActiveSection] = useState('dashboard-section');
@@ -245,17 +273,17 @@ const JobSeekerDashboardPage: React.FC<JobSeekerDashboardPageProps> = ({ user, s
             case 'subscriptions-section':
                 return <SubscriptionSection user={user} />;
             case 'recommendations-section':
-                return <PlaceholderSection title="AI Job Recommendations" />;
+                return <RecommendationsSection setCurrentPage={setCurrentPage} savedJobIds={savedJobIds} toggleSaveJob={toggleSaveJob} setSelectedJobForModal={setSelectedJobForModal} />;
             case 'skill-builder-section':
-                return <PlaceholderSection title="Skill Builder" />;
+                return <SkillBuilderSection />;
             case 'career-goals-section':
-                return <PlaceholderSection title="Career Goals" />;
+                return <CareerGoalsSection />;
             case 'ai-resume-review-section':
-                return <PlaceholderSection title="AI Resume Review" />;
+                return <AIResumeReviewSection />;
             case 'mock-interview-section':
-                return <PlaceholderSection title="Mock Interview Practice" />;
+                return <MockInterviewSection />;
             case 'achievements-section':
-                return <PlaceholderSection title="My Achievements" />;
+                return <AchievementsSection />;
             default: 
                 return <DashboardSection user={user} setCurrentPage={setCurrentPage} savedJobIds={savedJobIds} toggleSaveJob={toggleSaveJob} onViewDetails={setSelectedJobForModal} />;
         }
