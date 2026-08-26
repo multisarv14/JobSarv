@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { BookOpen, Code, Lightbulb, PenTool, Database, Award, ArrowRight } from 'lucide-react';
 
@@ -10,6 +10,7 @@ const courses = [
 ];
 
 const SkillHubPage: React.FC = () => {
+    const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
     return (
         <div className="bg-white min-h-screen py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,6 +36,7 @@ const SkillHubPage: React.FC = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
+                            onClick={() => setSelectedCourse(course.title)}
                             className="bg-gray-50 rounded-3xl p-6 hover:bg-white hover:shadow-2xl transition-all border border-gray-100 group cursor-pointer"
                         >
                             <div className={`h-12 w-12 rounded-2xl ${course.color} flex items-center justify-center text-white mb-6 transform group-hover:scale-110 transition-transform`}>
@@ -58,13 +60,14 @@ const SkillHubPage: React.FC = () => {
                         <p className="text-indigo-100 text-lg mb-10 leading-relaxed">
                             Validate your expertise and stand out to top employers with our certification programs in Software Development, Data Science, and Marketing.
                         </p>
-                        <button className="flex items-center gap-2 bg-white text-indigo-900 px-8 py-4 rounded-2xl font-bold hover:bg-indigo-50 transition-colors">
+                        <button onClick={() => setSelectedCourse('Industry Certifications')} className="flex items-center gap-2 bg-white text-indigo-900 px-8 py-4 rounded-2xl font-bold hover:bg-indigo-50 transition-colors">
                             Browse Certifications <ArrowRight className="h-5 w-5" />
                         </button>
                     </div>
                     {/* Decorative abstract shape */}
                     <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500 rounded-full blur-[100px] opacity-20 -mr-20 -mt-20"></div>
                 </div>
+                {selectedCourse && <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4" onClick={() => setSelectedCourse(null)}><div className="w-full max-w-md rounded-2xl bg-white p-8" onClick={event => event.stopPropagation()}><p className="text-xs font-bold uppercase tracking-wider text-indigo-600">Skill Hub</p><h2 className="mt-2 text-2xl font-bold text-gray-900">{selectedCourse}</h2><p className="mt-3 text-gray-600">Course enrollment is coming soon. Your interest has been noted.</p><button onClick={() => setSelectedCourse(null)} className="mt-6 rounded-lg bg-indigo-600 px-4 py-2 font-bold text-white">Close</button></div></div>}
             </div>
         </div>
     );

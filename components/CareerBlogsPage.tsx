@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Tag, User, Calendar, ArrowRight } from 'lucide-react';
 
@@ -33,6 +33,7 @@ const posts = [
 ];
 
 const CareerBlogsPage: React.FC = () => {
+    const [selectedPost, setSelectedPost] = useState<typeof posts[number] | null>(null);
     return (
         <div className="bg-white min-h-screen py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,6 +49,7 @@ const CareerBlogsPage: React.FC = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
+                            onClick={() => setSelectedPost(post)}
                             className="flex flex-col group cursor-pointer"
                         >
                             <div className="relative h-64 w-full rounded-3xl overflow-hidden mb-6">
@@ -77,10 +79,11 @@ const CareerBlogsPage: React.FC = () => {
                 </div>
                 
                 <div className="mt-20 flex justify-center">
-                    <button className="flex items-center gap-2 px-8 py-4 border-2 border-indigo-600 text-indigo-600 font-bold rounded-2xl hover:bg-indigo-600 hover:text-white transition-all group">
-                        View All Articles <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                    <button onClick={() => setSelectedPost(posts[0])} className="flex items-center gap-2 px-8 py-4 border-2 border-indigo-600 text-indigo-600 font-bold rounded-2xl hover:bg-indigo-600 hover:text-white transition-all group">
+                        Read Featured Article <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                     </button>
                 </div>
+                {selectedPost && <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4" onClick={() => setSelectedPost(null)}><article className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 sm:p-8" onClick={event => event.stopPropagation()}><p className="text-xs font-bold uppercase tracking-wider text-indigo-600">{selectedPost.category}</p><h2 className="mt-2 text-2xl font-bold text-gray-900">{selectedPost.title}</h2><p className="mt-1 text-sm text-gray-500">By {selectedPost.author} · {selectedPost.date}</p><img src={selectedPost.image} alt="" className="mt-6 h-48 w-full rounded-xl object-cover" /><p className="mt-6 text-gray-600 leading-relaxed">{selectedPost.excerpt} This article is part of the Jobsarv career insights series, created to help you make confident, practical decisions throughout your job search.</p><button onClick={() => setSelectedPost(null)} className="mt-6 rounded-lg bg-indigo-600 px-4 py-2 font-bold text-white">Close article</button></article></div>}
             </div>
         </div>
     );

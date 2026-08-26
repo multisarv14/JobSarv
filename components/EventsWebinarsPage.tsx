@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Calendar, Video, Clock, Users, ArrowRight } from 'lucide-react';
 
@@ -33,6 +33,7 @@ const events = [
 ];
 
 const EventsWebinarsPage: React.FC = () => {
+    const [registeredEvent, setRegisteredEvent] = useState<number | null>(null);
     return (
         <div className="bg-gray-50 min-h-screen py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -75,8 +76,8 @@ const EventsWebinarsPage: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <button className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
-                                        Register Now <Video className="h-4 w-4" />
+                                    <button onClick={() => setRegisteredEvent(event.id)} className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
+                                        {registeredEvent === event.id ? 'Registered' : 'Register Now'} <Video className="h-4 w-4" />
                                     </button>
                                     <button className="text-gray-400 hover:text-gray-600 font-medium flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                                         Learn More <ArrowRight className="h-4 w-4" />
