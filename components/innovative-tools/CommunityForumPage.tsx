@@ -24,6 +24,7 @@ const ForumThreadRow: React.FC<{ thread: ForumThread }> = ({ thread }) => (
 );
 
 const CommunityForumPage: React.FC = () => {
+    const [showComposer, setShowComposer] = useState(false);
     return (
         <div className="bg-white min-h-screen animate-fade-in">
             <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -32,10 +33,12 @@ const CommunityForumPage: React.FC = () => {
                         <h1 className="text-4xl font-extrabold text-gray-900">Community Forum</h1>
                         <p className="mt-2 text-lg text-gray-600">Connect with peers, share knowledge, and get answers.</p>
                     </div>
-                    <button className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                    <button onClick={() => setShowComposer(current => !current)} className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
                         Start a New Discussion
                     </button>
                 </div>
+
+                {showComposer && <form onSubmit={event => { event.preventDefault(); setShowComposer(false); }} className="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4"><input required placeholder="Discussion title" className="w-full rounded-md border border-gray-300 p-3" /><textarea required placeholder="Share your question or insight..." rows={3} className="mt-3 w-full rounded-md border border-gray-300 p-3" /><button type="submit" className="mt-3 rounded-md bg-indigo-600 px-4 py-2 font-semibold text-white">Publish discussion</button></form>}
 
                 <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
                     <div className="p-4 bg-gray-50 border-b flex justify-between items-center">

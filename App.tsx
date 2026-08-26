@@ -181,11 +181,11 @@ const App: React.FC = () => {
             case Page.GlobalJobs:
                 return <GlobalJobsPage {...commonPageProps} />;
             case Page.DiversityInclusion:
-                return <DiversityInclusionPage />;
+                return <DiversityInclusionPage setCurrentPage={setCurrentPage} />;
             case Page.ScholarshipsGrants:
                 return <ScholarshipsGrantsPage />;
             case Page.HireViaWhatsApp:
-                return <HireViaWhatsAppPage />;
+                return <HireViaWhatsAppPage setCurrentPage={setCurrentPage} />;
             case Page.CommunityForum:
                 return <CommunityForumPage />;
             default:

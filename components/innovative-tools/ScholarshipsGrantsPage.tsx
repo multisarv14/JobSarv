@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { MOCK_SCHOLARSHIPS } from '../../constants';
 import { Scholarship } from '../../types';
 
@@ -32,6 +32,13 @@ const ScholarshipCard: React.FC<{ item: Scholarship }> = ({ item }) => (
 
 
 const ScholarshipsGrantsPage: React.FC = () => {
+    const [search, setSearch] = useState('');
+    const [field, setField] = useState('All Fields of Study');
+    const scholarships = useMemo(() => MOCK_SCHOLARSHIPS.filter(item => {
+        const matchesSearch = `${item.title} ${item.provider}`.toLowerCase().includes(search.toLowerCase());
+        return matchesSearch && (field === 'All Fields of Study' || item.fieldOfStudy === field);
+    }), [search, field]);
+
     return (
         <div className="bg-gray-50 min-h-screen animate-fade-in">
             <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
@@ -43,8 +50,8 @@ const ScholarshipsGrantsPage: React.FC = () => {
                 </div>
 
                 <div className="mt-12 bg-white rounded-lg shadow p-4 mb-8 flex flex-col md:flex-row gap-4 items-center">
-                    <input type="text" placeholder="Search by title or provider..." className="w-full md:flex-1 p-2 border border-gray-300 rounded-md" />
-                     <select className="w-full md:w-auto p-2 border border-gray-300 rounded-md">
+                    <input value={search} onChange={event => setSearch(event.target.value)} type="text" placeholder="Search by title or provider..." className="w-full md:flex-1 p-2 border border-gray-300 rounded-md" />
+                     <select value={field} onChange={event => setField(event.target.value)} className="w-full md:w-auto p-2 border border-gray-300 rounded-md">
                         <option>All Fields of Study</option>
                         <option>Technology</option>
                         <option>Design</option>
@@ -55,7 +62,7 @@ const ScholarshipsGrantsPage: React.FC = () => {
                 </div>
 
                 <div className="mt-8 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                    {MOCK_SCHOLARSHIPS.map(item => (
+                    {scholarships.map(item => (
                         <ScholarshipCard key={item.id} item={item} />
                     ))}
                 </div>

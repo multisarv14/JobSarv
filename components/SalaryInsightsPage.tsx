@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { TrendingUp, DollarSign, PieChart, Briefcase, MapPin, Search } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
@@ -12,6 +12,16 @@ const data = [
 ];
 
 const SalaryInsightsPage: React.FC = () => {
+    const [role, setRole] = useState('');
+    const [location, setLocation] = useState('');
+    const [result, setResult] = useState('');
+
+    const handleAnalysis = (event: React.FormEvent) => {
+        event.preventDefault();
+        if (!role.trim() || !location.trim()) return;
+        setResult(`Based on current Jobsarv benchmarks, ${role} roles in ${location} are trending competitively.`);
+    };
+
     return (
         <div className="bg-white min-h-screen py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,19 +94,20 @@ const SalaryInsightsPage: React.FC = () => {
                             <Search className="h-6 w-6 text-indigo-600 mb-4" />
                             <h3 className="text-xl font-bold mb-2">Check Your Salary</h3>
                             <p className="text-gray-500 text-sm mb-6">Input your details to see how your compensation compares.</p>
-                            <div className="space-y-4">
+                            <form onSubmit={handleAnalysis} className="space-y-4">
                                 <div className="relative">
                                     <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                    <input type="text" placeholder="Job Title" className="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-indigo-500" />
+                                    <input value={role} onChange={event => setRole(event.target.value)} type="text" placeholder="Job Title" className="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-indigo-500" />
                                 </div>
                                 <div className="relative">
                                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                    <input type="text" placeholder="Location" className="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-indigo-500" />
+                                    <input value={location} onChange={event => setLocation(event.target.value)} type="text" placeholder="Location" className="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-indigo-500" />
                                 </div>
-                                <button className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-colors">
+                                <button type="submit" className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-colors">
                                     Get Analysis
                                 </button>
-                            </div>
+                                {result && <p className="text-sm text-emerald-700 bg-emerald-50 rounded-lg p-3">{result}</p>}
+                            </form>
                         </div>
                     </div>
                 </div>

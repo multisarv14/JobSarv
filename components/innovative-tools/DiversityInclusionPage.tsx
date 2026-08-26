@@ -1,6 +1,7 @@
 import React from 'react';
 import { MOCK_COMPANY_DI_PROFILES } from '../../constants';
 import { CompanyDIProfile } from '../../types';
+import { Page } from '../../types';
 
 const getScoreColor = (score: number) => {
     if (score >= 90) return 'text-green-500';
@@ -8,7 +9,7 @@ const getScoreColor = (score: number) => {
     return 'text-red-500';
 };
 
-const CompanyDICard: React.FC<{ profile: CompanyDIProfile }> = ({ profile }) => (
+const CompanyDICard: React.FC<{ profile: CompanyDIProfile; onViewJobs: () => void }> = ({ profile, onViewJobs }) => (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
         <div className="p-6">
             <div className="flex items-center gap-4">
@@ -37,12 +38,12 @@ const CompanyDICard: React.FC<{ profile: CompanyDIProfile }> = ({ profile }) => 
             </div>
         </div>
         <div className="bg-gray-50 px-6 py-3">
-            <a href="#" className="text-sm font-semibold text-indigo-600 hover:text-indigo-800">View Jobs</a>
+            <button type="button" onClick={onViewJobs} className="text-sm font-semibold text-indigo-600 hover:text-indigo-800">View Jobs</button>
         </div>
     </div>
 );
 
-const DiversityInclusionPage: React.FC = () => {
+const DiversityInclusionPage: React.FC<{ setCurrentPage: (page: Page) => void }> = ({ setCurrentPage }) => {
     return (
         <div className="bg-gray-50 min-h-screen animate-fade-in">
             <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
@@ -55,7 +56,7 @@ const DiversityInclusionPage: React.FC = () => {
 
                 <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                     {MOCK_COMPANY_DI_PROFILES.map(profile => (
-                        <CompanyDICard key={profile.id} profile={profile} />
+                        <CompanyDICard key={profile.id} profile={profile} onViewJobs={() => setCurrentPage(Page.FindJobs)} />
                     ))}
                 </div>
             </div>

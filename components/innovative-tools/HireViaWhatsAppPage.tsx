@@ -1,4 +1,5 @@
 import React from 'react';
+import { Page } from '../../types';
 
 const FeatureCard: React.FC<{ icon: React.ReactNode; title: string; description: string }> = ({ icon, title, description }) => (
     <div className="text-center p-6 bg-white rounded-xl shadow-lg border border-gray-100">
@@ -11,7 +12,7 @@ const FeatureCard: React.FC<{ icon: React.ReactNode; title: string; description:
 );
 
 
-const HireViaWhatsAppPage: React.FC = () => {
+const HireViaWhatsAppPage: React.FC<{ setCurrentPage: (page: Page) => void }> = ({ setCurrentPage }) => {
     return (
         <div className="bg-gray-50 animate-fade-in">
             {/* Hero Section */}
@@ -24,7 +25,7 @@ const HireViaWhatsAppPage: React.FC = () => {
                         Connect with candidates directly, schedule interviews, and make offers all within the world's most popular messaging app.
                     </p>
                     <div className="mt-10">
-                        <button className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-lg transform hover:scale-105">
+                        <button onClick={() => setCurrentPage(Page.EmployerSignUp)} className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-lg transform hover:scale-105">
                             Get Started for Free
                         </button>
                     </div>
